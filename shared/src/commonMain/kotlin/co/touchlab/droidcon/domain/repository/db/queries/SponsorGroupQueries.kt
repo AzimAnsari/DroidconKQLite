@@ -9,7 +9,6 @@ import com.kqlite.statement.insert
 import com.kqlite.statement.quickSelect
 import com.kqlite.statement.select
 import com.kqlite.table.Action
-import kotlin.js.JsName
 
 class SponsorGroupQueries {
 
@@ -44,7 +43,7 @@ class SponsorGroupQueries {
             }.limit(1)
             .execute()
             .use {
-                it.hasNext()
+                it.getInt(0) > 0
             }
     }
 

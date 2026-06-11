@@ -64,6 +64,6 @@ class RoomQueries {
                 (it.id EQ id).AND(it.conferenceId EQ conferenceId)
             }.execute()
 
-        return cursor.asSequence().count() > 0
+        return cursor.use { it.getInt(0) > 0 }
     }
 }

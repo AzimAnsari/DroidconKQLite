@@ -84,6 +84,7 @@ class DefaultSyncService(
                                 runApiDataSourcesSynchronization(conference)
                                 lastSessionizeSyncThisLoop = dateTimeService.now()
                             } catch (e: Exception) {
+                                log.d(e) { "DATASYNC runSynchronization error: ${e.message}" }
                                 delay(SESSIONIZE_SYNC_POLL_DELAY)
                                 continue
                             }
