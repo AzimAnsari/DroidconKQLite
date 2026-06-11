@@ -1,19 +1,14 @@
 package co.touchlab.droidcon.domain.repository.impl
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOne
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import co.touchlab.droidcon.composite.Url
-import co.touchlab.droidcon.db.ProfileQueries
-import co.touchlab.droidcon.db.SessionSpeakerQueries
-import co.touchlab.droidcon.db.SponsorRepresentativeQueries
 import co.touchlab.droidcon.domain.entity.Profile
 import co.touchlab.droidcon.domain.entity.Session
 import co.touchlab.droidcon.domain.entity.Sponsor
 import co.touchlab.droidcon.domain.repository.ProfileRepository
-import kotlinx.coroutines.Dispatchers
+import co.touchlab.droidcon.domain.repository.db.queries.ProfileQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SessionSpeakerQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SponsorRepresentativeQueries
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class SqlDelightProfileRepository(
     private val profileQueries: ProfileQueries,
@@ -23,7 +18,7 @@ class SqlDelightProfileRepository(
     ProfileRepository {
 
     override suspend fun getSpeakersBySession(id: Session.Id, conferenceId: Long): List<Profile> =
-        profileQueries.selectBySession(id.value, conferenceId, ::profileFactory).executeAsList()
+        profileQueries.selectBySession(id.value, conferenceId)
 
     override fun setSessionSpeakers(session: Session, speakers: List<Profile.Id>, conferenceId: Long) {
         speakerQueries.deleteBySessionId(session.id.value, conferenceId)
@@ -59,33 +54,22 @@ class SqlDelightProfileRepository(
             sponsorName = sponsorId.name,
             sponsorGroupName = sponsorId.group,
             conferenceId = conferenceId,
-            mapper = ::profileFactory,
-        ).executeAsList()
+        )
 
     override fun allSync(conferenceId: Long): List<Profile> =
-        profileQueries.selectAll(conferenceId, mapper = ::profileFactory).executeAsList()
+        profileQueries.selectAll(conferenceId)
 
     override fun observe(id: Profile.Id, conferenceId: Long): Flow<Profile> =
-        profileQueries.selectById(id.value, conferenceId, ::profileFactory).asFlow().mapToOne(Dispatchers.Main)
+        flow { emit(profileQueries.selectById(id.value, conferenceId)!!) }
 
     override fun observeOrNull(id: Profile.Id, conferenceId: Long): Flow<Profile?> =
-        profileQueries.selectById(id.value, conferenceId, ::profileFactory).asFlow().mapToOneOrNull(Dispatchers.Main)
+        flow { emit(profileQueries.selectById(id.value, conferenceId)) }
 
     override fun observeAll(conferenceId: Long): Flow<List<Profile>> =
-        profileQueries.selectAll(conferenceId, ::profileFactory).asFlow().mapToList(Dispatchers.Main)
+        flow { emit(profileQueries.selectAll(conferenceId)) }
 
     override fun doUpsert(entity: Profile, conferenceId: Long) {
-        profileQueries.upsert(
-            id = entity.id.value,
-            conferenceId = conferenceId,
-            fullName = entity.fullName,
-            bio = entity.bio,
-            tagLine = entity.tagLine,
-            profilePicture = entity.profilePicture?.string,
-            twitter = entity.twitter?.string,
-            linkedIn = entity.linkedIn?.string,
-            website = entity.website?.string,
-        )
+        profileQueries.upsert(entity, conferenceId)
     }
 
     override fun doDelete(id: Profile.Id, conferenceId: Long) {
@@ -93,26 +77,5 @@ class SqlDelightProfileRepository(
     }
 
     override fun contains(id: Profile.Id, conferenceId: Long): Boolean =
-        profileQueries.existsById(id.value, conferenceId).executeAsOne().toBoolean()
-
-    private fun profileFactory(
-        id: String,
-        conferenceId: Long,
-        fullName: String,
-        bio: String?,
-        tagLine: String?,
-        profilePicture: String?,
-        twitter: String?,
-        linkedIn: String?,
-        website: String?,
-    ) = Profile(
-        id = Profile.Id(id),
-        fullName = fullName,
-        bio = bio,
-        tagLine = tagLine,
-        profilePicture = profilePicture?.let(::Url),
-        twitter = twitter?.let(::Url),
-        linkedIn = linkedIn?.let(::Url),
-        website = website?.let(::Url),
-    )
+        profileQueries.existsById(id.value, conferenceId)
 }

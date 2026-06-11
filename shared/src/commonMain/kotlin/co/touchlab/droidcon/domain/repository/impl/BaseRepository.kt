@@ -47,12 +47,4 @@ abstract class BaseRepository<ID : Any, ENTITY : DomainEntity<ID>> : Repository<
     protected abstract fun doUpsert(entity: ENTITY, conferenceId: Long)
 
     protected abstract fun doDelete(id: ID, conferenceId: Long)
-
-    protected fun Long.toBoolean(): Boolean = this != 0L
-
-    protected fun Boolean.toLong(): Long = if (this) {
-        1L
-    } else {
-        0L
-    }
 }

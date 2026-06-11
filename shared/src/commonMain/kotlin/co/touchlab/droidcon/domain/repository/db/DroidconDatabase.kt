@@ -1,0 +1,55 @@
+package co.touchlab.droidcon.domain.repository.db
+
+import co.touchlab.droidcon.domain.repository.db.queries.ConferenceQueries
+import co.touchlab.droidcon.domain.repository.db.queries.ProfileQueries
+import co.touchlab.droidcon.domain.repository.db.queries.RoomQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SessionQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SessionSpeakerQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SponsorGroupQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SponsorQueries
+import co.touchlab.droidcon.domain.repository.db.queries.SponsorRepresentativeQueries
+import co.touchlab.droidcon.domain.repository.db.table.ConferenceTable
+import co.touchlab.droidcon.domain.repository.db.table.ProfileTable
+import co.touchlab.droidcon.domain.repository.db.table.RoomTable
+import co.touchlab.droidcon.domain.repository.db.table.SessionSpeakerTable
+import co.touchlab.droidcon.domain.repository.db.table.SessionTable
+import co.touchlab.droidcon.domain.repository.db.table.SponsorGroupTable
+import co.touchlab.droidcon.domain.repository.db.table.SponsorRepresentativeTable
+import co.touchlab.droidcon.domain.repository.db.table.SponsorTable
+import co.touchlab.droidcon.domain.repository.impl.KQLitePathBuilder
+import com.kqlite.database.KQLiteDatabase
+import com.kqlite.database.KQLiteDriver
+import com.kqlite.table.KQLiteTable
+
+class DroidconDatabase(pathBuilder: KQLitePathBuilder) : KQLiteDatabase(pathBuilder.buildPath(), VERSION) {
+    override fun getKQLiteDriver(): KQLiteDriver {
+        return DroidconDatabaseDriver()
+    }
+
+    override fun getKQLiteTables(): List<KQLiteTable> {
+        return listOf(
+            ConferenceTable,
+            ProfileTable,
+            RoomTable,
+            SessionTable,
+            SessionSpeakerTable,
+            SponsorTable,
+            SponsorGroupTable,
+            SponsorRepresentativeTable,
+        )
+    }
+
+    companion object {
+        const val NAME = "droidcon.db"
+        const val VERSION = 1
+    }
+
+    val profileQueries = ProfileQueries()
+    val sessionQueries = SessionQueries()
+    val roomQueries = RoomQueries()
+    val sponsorQueries = SponsorQueries()
+    val sponsorGroupQueries = SponsorGroupQueries()
+    val sessionSpeakerQueries = SessionSpeakerQueries()
+    val conferenceQueries = ConferenceQueries()
+    val sponsorRepresentativeQueries = SponsorRepresentativeQueries()
+}

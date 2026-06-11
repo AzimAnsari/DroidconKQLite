@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.serialization)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.sqlDelight)
 }
 
 android {
@@ -74,21 +73,20 @@ kotlin {
             api(libs.uuid)
 
             implementation(libs.bundles.ktor.common)
-            implementation(libs.bundles.sqldelight.common)
+            implementation(libs.kqlite)
+            implementation(libs.sqlite)
+            implementation(libs.sqlite.bundled)
 
             implementation(libs.stately.common)
             implementation(libs.koin.core)
             implementation(libs.korio)
         }
         androidMain.dependencies {
-            implementation(libs.sqldelight.driver.android)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.core)
         }
         iosMain.dependencies {
-            implementation(libs.sqldelight.driver.ios)
-            implementation(libs.sqliter)
             implementation(libs.ktor.client.ios)
         }
 
@@ -103,11 +101,5 @@ kotlin {
         matching { it.name.endsWith("Test") }.configureEach {
             languageSettings.optIn("kotlin.time.ExperimentalTime")
         }
-    }
-}
-
-sqldelight {
-    databases.create("DroidconDatabase") {
-        packageName.set("co.touchlab.droidcon.db")
     }
 }
