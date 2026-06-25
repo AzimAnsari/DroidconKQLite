@@ -1,6 +1,5 @@
 package co.touchlab.droidcon
 
-import app.cash.sqldelight.ColumnAdapter
 import co.touchlab.droidcon.application.gateway.SettingsGateway
 import co.touchlab.droidcon.application.gateway.impl.DefaultSettingsGateway
 import co.touchlab.droidcon.application.repository.AboutRepository
@@ -9,10 +8,6 @@ import co.touchlab.droidcon.application.repository.impl.DefaultAboutRepository
 import co.touchlab.droidcon.application.repository.impl.DefaultSettingsRepository
 import co.touchlab.droidcon.application.service.NotificationSchedulingService
 import co.touchlab.droidcon.application.service.impl.DefaultNotificationSchedulingService
-import co.touchlab.droidcon.db.ConferenceTable
-import co.touchlab.droidcon.db.DroidconDatabase
-import co.touchlab.droidcon.db.SessionTable
-import co.touchlab.droidcon.db.SponsorGroupTable
 import co.touchlab.droidcon.domain.gateway.SessionGateway
 import co.touchlab.droidcon.domain.gateway.SponsorGateway
 import co.touchlab.droidcon.domain.gateway.impl.DefaultSessionGateway
@@ -23,13 +18,13 @@ import co.touchlab.droidcon.domain.repository.RoomRepository
 import co.touchlab.droidcon.domain.repository.SessionRepository
 import co.touchlab.droidcon.domain.repository.SponsorGroupRepository
 import co.touchlab.droidcon.domain.repository.SponsorRepository
+import co.touchlab.droidcon.domain.repository.db.DroidconDatabase
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightConferenceRepository
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightProfileRepository
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightRoomRepository
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightSessionRepository
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightSponsorGroupRepository
 import co.touchlab.droidcon.domain.repository.impl.SqlDelightSponsorRepository
-import co.touchlab.droidcon.domain.repository.impl.adapter.InstantSqlDelightAdapter
 import co.touchlab.droidcon.domain.service.ConferenceConfigProvider
 import co.touchlab.droidcon.domain.service.DateTimeService
 import co.touchlab.droidcon.domain.service.FeedbackService
@@ -51,7 +46,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import kotlin.time.Clock
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.TimeZone
 import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -73,41 +67,9 @@ fun initKoin(additionalModules: List<Module>): KoinApplication {
     return koinApplication
 }
 
-val intToLongAdapter = object : ColumnAdapter<Int, Long> {
-    override fun decode(databaseValue: Long): Int = databaseValue.toInt()
-
-    override fun encode(value: Int): Long = value.toLong()
-}
-
-val timeZoneAdapter = object : ColumnAdapter<TimeZone, String> {
-    override fun decode(databaseValue: String): TimeZone = TimeZone.of(databaseValue)
-    override fun encode(value: TimeZone): String = value.id
-}
-
-// We defined this adapter but it's not being used automatically by SQLDelight yet
-// Will be used when we manually handle the selected flag
-val booleanAdapter = object : ColumnAdapter<Boolean, Long> {
-    override fun decode(databaseValue: Long): Boolean = databaseValue == 1L
-    override fun encode(value: Boolean): Long = if (value) 1L else 0L
-}
-
 private val coreModule = module {
     single {
-        DroidconDatabase.invoke(
-            driver = get(),
-            sessionTableAdapter = SessionTable.Adapter(
-                startsAtAdapter = InstantSqlDelightAdapter,
-                endsAtAdapter = InstantSqlDelightAdapter,
-                feedbackRatingAdapter = intToLongAdapter,
-            ),
-            sponsorGroupTableAdapter = SponsorGroupTable.Adapter(
-                intToLongAdapter,
-            ),
-            conferenceTableAdapter = ConferenceTable.Adapter(
-                conferenceTimeZoneAdapter = timeZoneAdapter,
-                // Note: selectedAdapter will be added when the adapter is regenerated
-            ),
-        )
+        DroidconDatabase(pathBuilder = get()).also { it.open() }
     }
     single<Clock> { Clock.System }
 

@@ -1,9 +1,15 @@
 package co.touchlab.droidcon.domain.repository.impl
 
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import co.touchlab.droidcon.db.DroidconDatabase
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 
-actual class SqlDelightDriverFactory {
-    actual fun createDriver(): SqlDriver = NativeSqliteDriver(DroidconDatabase.Schema, "droidcon.db")
+actual class KQLiteDatabasePathProvider {
+    actual fun provideAbsolutePath(): String {
+        val fileManager = NSFileManager.defaultManager
+        val urls = fileManager.URLsForDirectory(NSDocumentDirectory, NSUserDomainMask)
+        val documentDirectory = urls.first() as NSURL
+        return documentDirectory.path!!
+    }
 }
