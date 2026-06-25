@@ -24,9 +24,6 @@ delete {
 selectById:
 SELECT * FROM profileTable WHERE id = ? AND conferenceId = ?;
 
-existsById:
-SELECT count(1) FROM profileTable WHERE id = ? AND conferenceId = ?;
-
 selectBySession:
 SELECT profileTable.*
 FROM profileTable

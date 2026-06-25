@@ -26,17 +26,11 @@ WHERE id = ?;
 selectAll:
 SELECT * FROM conferenceTable;
 
-selectAllActive:
-SELECT * FROM conferenceTable WHERE active = 1;
-
 selectById:
 SELECT * FROM conferenceTable WHERE id = ?;
 
 deleteById:
 DELETE FROM conferenceTable WHERE id = ?;
-
-selectSelected:
-SELECT * FROM conferenceTable WHERE selected = 1 LIMIT 1;
 
 updateSelected:
 UPDATE conferenceTable
