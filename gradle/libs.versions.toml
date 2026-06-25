@@ -21,7 +21,7 @@ kermit = "2.0.8"
 hyperdrive = "0.1.148"
 
 multiplatformSettings = "1.3.0"
-kqlite = "0.0.9-SNAPSHOT"
+kqlite = "0.0.8-SNAPSHOT"
 sqlite = "2.6.2"
 firebase-analytics = "22.5.0"
 firebase-crashlytics = "19.4.4"

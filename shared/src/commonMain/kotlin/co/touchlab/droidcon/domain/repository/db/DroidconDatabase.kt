@@ -1,6 +1,5 @@
 package co.touchlab.droidcon.domain.repository.db
 
-import androidx.sqlite.SQLiteConnection
 import co.touchlab.droidcon.domain.repository.db.queries.ConferenceQueries
 import co.touchlab.droidcon.domain.repository.db.queries.ProfileQueries
 import co.touchlab.droidcon.domain.repository.db.queries.RoomQueries
@@ -20,8 +19,6 @@ import co.touchlab.droidcon.domain.repository.db.table.SponsorTable
 import co.touchlab.droidcon.domain.repository.impl.KQLitePathBuilder
 import com.kqlite.database.KQLiteDatabase
 import com.kqlite.database.KQLiteDriver
-import com.kqlite.pragma.KQLitePragma
-import com.kqlite.statement.quickInsert
 import com.kqlite.table.KQLiteTable
 
 class DroidconDatabase(pathBuilder: KQLitePathBuilder) : KQLiteDatabase(pathBuilder.buildPath(), VERSION) {
@@ -40,25 +37,6 @@ class DroidconDatabase(pathBuilder: KQLitePathBuilder) : KQLiteDatabase(pathBuil
             SponsorGroupTable,
             SponsorRepresentativeTable,
         )
-    }
-
-    override fun onConfigure(pragma: KQLitePragma) {
-        // Enabling foreign keys constraints causes database failures
-        pragma.foreignKeys.set(false)
-    }
-
-    override fun onCreate(connection: SQLiteConnection) {
-        ConferenceTable.quickInsert {
-            it.conferenceName.bind("Droidcon NYC 2025")
-            it.conferenceTimeZone.bind("America/New_York")
-            it.projectId.bind("droidcon-148cc")
-            it.collectionName.bind("sponsors-nyc-2025")
-            it.apiKey.bind("AIzaSyCkD5DH2rUJ8aZuJzANpIFj0AVuCNik1l0")
-            it.scheduleId.bind("4lffd9w7")
-            it.selected.bind(true)
-            it.active.bind(true)
-            it.venueMap.bind(null)
-        }
     }
 
     companion object {

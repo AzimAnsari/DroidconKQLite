@@ -99,6 +99,8 @@ class ProfileQueries {
                 (it.id EQ value) AND (it.conferenceId EQ conferenceId)
             }.execute()
 
-        return cursor.use { it.getInt(0) > 0 }
+        return cursor.use {
+            it.asSequence().count() > 0
+        }
     }
 }

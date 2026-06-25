@@ -3,11 +3,9 @@ package co.touchlab.droidcon.domain.repository.db.queries
 import co.touchlab.droidcon.domain.entity.Sponsor
 import co.touchlab.droidcon.domain.repository.db.table.SponsorTable
 import com.kqlite.cursor.KQLiteCursor
-import com.kqlite.functions.COUNT
 import com.kqlite.statement.delete
 import com.kqlite.statement.insert
 import com.kqlite.statement.select
-import com.kqlite.table.Action
 
 class SponsorQueries {
 
@@ -37,13 +35,15 @@ class SponsorQueries {
 
     fun existsById(name: String, group: String, conferenceId: Long): Boolean {
         val cursor = SponsorTable
-            .select(COUNT())
+            .select()
             .where {
                 (SponsorTable.name EQ name) AND (SponsorTable.groupName EQ group) AND (SponsorTable.conferenceId EQ conferenceId)
             }.limit(1)
             .execute()
 
-        return cursor.use { it.getInt(0) > 0 }
+        return cursor.use {
+            it.hasNext()
+        }
     }
 
     fun sponsorsByGroup(group: String, conferenceId: Long): List<Sponsor> {
@@ -58,7 +58,7 @@ class SponsorQueries {
 
     fun upsert(entity: Sponsor, conferenceId: Long) {
         SponsorTable
-            .insert(onConflict = Action.REPLACE)
+            .insert()
             .bind {
                 it.name.bind(entity.id.name)
                 it.groupName.bind(entity.id.group)

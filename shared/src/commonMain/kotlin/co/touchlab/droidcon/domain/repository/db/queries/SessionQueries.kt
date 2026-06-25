@@ -101,12 +101,13 @@ class SessionQueries {
     }
 
     fun existsById(sessionId: String, conferenceId: Long): Boolean {
-        val cursor = SessionTable
+        return SessionTable
             .select(COUNT())
             .where {
                 (it.id EQ sessionId) AND (it.conferenceId EQ conferenceId)
             }.execute()
-
-        return cursor.use { it.getInt(0) > 0 }
+            .use {
+                it.hasNext()
+            }
     }
 }
