@@ -1,7 +1,8 @@
 package co.touchlab.droidcon
 
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.droidcon.application.service.NotificationService
-import co.touchlab.droidcon.domain.repository.impl.KQLitePathBuilder
+import co.touchlab.droidcon.domain.repository.impl.SqlDelightDriverFactory
 import co.touchlab.droidcon.service.IOSNotificationService
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.NSLogWriter
@@ -20,7 +21,7 @@ import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
 actual val platformModule = module {
-    single<KQLitePathBuilder> { KQLitePathBuilder() }
+    single<SqlDriver> { SqlDelightDriverFactory().createDriver() }
 
     single<HttpClientEngine> {
         Darwin.create {}

@@ -83,6 +83,7 @@ kotlin {
             implementation(libs.coil.network)
 
             implementation(libs.bundles.ktor.common)
+            implementation(libs.bundles.sqldelight.common)
 
             implementation(libs.stately.common)
             implementation(libs.koin.core)

@@ -1,9 +1,10 @@
 package co.touchlab.droidcon.domain.repository.impl
 
 import android.content.Context
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import co.touchlab.droidcon.db.DroidconDatabase
 
-actual class KQLitePathBuilder(private val context: Context) {
-    actual fun buildPath(): String {
-        return context.getDatabasePath("droidcon.db").absolutePath
-    }
+actual class SqlDelightDriverFactory(private val context: Context) {
+    actual fun createDriver(): SqlDriver = AndroidSqliteDriver(DroidconDatabase.Schema, context, "droidcon.db")
 }

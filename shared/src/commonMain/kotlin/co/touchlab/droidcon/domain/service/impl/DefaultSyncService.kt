@@ -1,6 +1,7 @@
 package co.touchlab.droidcon.domain.service.impl
 
 import co.touchlab.droidcon.composite.Url
+import co.touchlab.droidcon.db.DroidconDatabase
 import co.touchlab.droidcon.domain.entity.Conference
 import co.touchlab.droidcon.domain.entity.Profile
 import co.touchlab.droidcon.domain.entity.Room
@@ -13,7 +14,6 @@ import co.touchlab.droidcon.domain.repository.RoomRepository
 import co.touchlab.droidcon.domain.repository.SessionRepository
 import co.touchlab.droidcon.domain.repository.SponsorGroupRepository
 import co.touchlab.droidcon.domain.repository.SponsorRepository
-import co.touchlab.droidcon.domain.repository.db.DroidconDatabase
 import co.touchlab.droidcon.domain.service.DateTimeService
 import co.touchlab.droidcon.domain.service.ServerApi
 import co.touchlab.droidcon.domain.service.SyncService
@@ -193,14 +193,14 @@ class DefaultSyncService(
 
         // DB Transactions for db mods are ridiculously faster than non-trans changes. Also, if something fails, thd db will roll back.
         // The repo architecture will likely need to change. Everything is suspend and unconcerned with thread, but that's not good practice.
-        db.withTransaction {
+        db.transaction {
             updateSpeakersFromDataSource(speakerDtos, conference)
             updateScheduleFromDataSource(days, conference)
         }
 
         // Sponsors may fail due to firebase errors, so we'll do this separate
         val sponsors = dataSource.getSponsors()
-        db.withTransaction {
+        db.transaction {
             updateSponsorsFromDataSource(sponsorSessionsGroups, sponsors, conference)
         }
     }

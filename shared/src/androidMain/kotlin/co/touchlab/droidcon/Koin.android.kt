@@ -1,7 +1,8 @@
 package co.touchlab.droidcon
 
+import app.cash.sqldelight.db.SqlDriver
 import co.touchlab.droidcon.application.service.NotificationService
-import co.touchlab.droidcon.domain.repository.impl.KQLitePathBuilder
+import co.touchlab.droidcon.domain.repository.impl.SqlDelightDriverFactory
 import co.touchlab.droidcon.service.AndroidNotificationService
 import co.touchlab.droidcon.util.formatter.AndroidDateFormatter
 import co.touchlab.droidcon.util.formatter.DateFormatter
@@ -18,8 +19,8 @@ import org.koin.dsl.module
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalKermitApi::class)
 actual val platformModule: Module = module {
-    single<KQLitePathBuilder> {
-        KQLitePathBuilder(context = get())
+    single<SqlDriver> {
+        SqlDelightDriverFactory(context = get()).createDriver()
     }
 
     single<HttpClientEngine> {
