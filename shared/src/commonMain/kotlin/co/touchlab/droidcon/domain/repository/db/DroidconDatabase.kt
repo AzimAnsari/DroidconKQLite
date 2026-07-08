@@ -26,9 +26,7 @@ import com.kqlite.statement.quickInsert
 import com.kqlite.table.KQLiteTable
 
 class DroidconDatabase(pathBuilder: KQLiteDatabasePathProvider) : KQLiteDatabase(
-    file = pathBuilder.provideAbsolutePath(),
-    version = VERSION,
-    kqLiteDriver = DroidconDatabaseDriver(BundledSQLiteDriver()),
+    kqLiteDriver = DroidconDatabaseDriver(dbFile = pathBuilder.provideAbsolutePath(), version = VERSION, BundledSQLiteDriver()),
 ) {
 
     companion object {

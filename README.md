@@ -1,4 +1,19 @@
-# Droidcon Mobile Clients
+# Droidcon Mobile KQLite
+KQLite is a Lightweight, Kotlin Multiplatform DSL to write typesafe SQL queries.
+It allows you to write SQL queries using a Kotlin object-style DSL instead of raw SQL strings.
+
+## KQLite Highlights
+* Features Object-relational Mapping (ORM) style interaction with tables.
+* Returns typesafe cursor which executes lazily on read and auto-closed when fully iterated.
+* Typesafe values binding and reading.
+* Entity binding and mapping.
+* Cursor result as Flow which emits on every INSERT, UPDATE and DELETE on table.
+* Quick convenience API.
+* Builtin SQLite functions. Scalar, Aggregate, Math, Date & Time, JSON.
+* SQLite familiar DSL.
+
+## KQLite Guide
+[kqlite.com](https://kqlite.com/)
 
 ## General Info
 
